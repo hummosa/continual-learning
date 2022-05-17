@@ -228,11 +228,12 @@ def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_
             train_datasets = []
             test_datasets = []
             for labels in labels_per_task:
-                target_transform = transforms.Lambda(
+                target_transform = transforms.Lambda( # transforms digit labels to binary classification 0,1 (or more depending on classes per task)
                     lambda y, x=labels[0]: y - x
                 ) if scenario=='domain' else None
                 train_datasets.append(SubDataset(mnist_train, labels, target_transform=target_transform))
                 test_datasets.append(SubDataset(mnist_test, labels, target_transform=target_transform))
+    
     else:
         raise RuntimeError('Given undefined experiment: {}'.format(name))
 
@@ -241,3 +242,7 @@ def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_
 
     # Return tuple of train-, validation- and test-dataset, config-dictionary and number of classes per task
     return config if only_config else ((train_datasets, test_datasets), config, classes_per_task)
+
+
+(train_datasets, test_datasets), config, classes_per_task = get_multitask_experiment('splitMNIST','domain', 5, data_dir="./datasets", only_config=False, verbose=False,exception=False)
+print('hello')
