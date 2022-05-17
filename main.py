@@ -200,6 +200,7 @@ def run(args, verbose=False):
         name=args.experiment, scenario=scenario, tasks=args.tasks, data_dir=args.d_dir,
         verbose=verbose, exception=True if args.seed==0 else False,
     )
+    
 
 
     #-------------------------------------------------------------------------------------------------#
