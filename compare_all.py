@@ -21,7 +21,7 @@ parser.add_argument('--results-dir', type=str, default='./results', dest='r_dir'
 # expirimental task parameters.
 task_params = parser.add_argument_group('Task Parameters')
 task_params.add_argument('--experiment', type=str, default='splitMNIST', choices=['permMNIST', 'splitMNIST'])
-task_params.add_argument('--scenario', type=str, default='task', choices=['task', 'domain', 'class'])
+task_params.add_argument('--scenario', type=str, default='domain', choices=['task', 'domain', 'class'])
 task_params.add_argument('--tasks', type=int, help='number of tasks')
 
 # specify loss functions to be used
@@ -177,7 +177,8 @@ if __name__ == '__main__':
     NONE = {}
     NONE = collect_all(NONE, seed_list, args, name="None")
 
-
+    all_metric_dics = [NONE, OFF ]
+    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
     ###----"TASK-SPECIFIC"----####
 
     ## XdG
@@ -209,6 +210,8 @@ if __name__ == '__main__':
     SI = collect_all(SI, seed_list, args, name="SI")
     args.si = False
 
+    all_metric_dics = [NONE, OFF, EWC, OEWC, SI, ]
+    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
 
     ###----"REPLAY"----###
 
@@ -259,7 +262,8 @@ if __name__ == '__main__':
         ICARL = {}
         ICARL = collect_all(ICARL, seed_list, args, name="iCaRL (budget = {})".format(args.budget))
 
-
+    all_metric_dics = [NONE, OFF, EWC, OEWC, SI, LWF, RP, RKD, AGEM, ER]
+    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
     #-------------------------------------------------------------------------------------------------#
 
     #---------------------------#

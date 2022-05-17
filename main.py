@@ -32,7 +32,7 @@ parser.add_argument('--results-dir', type=str, default='./results', dest='r_dir'
 # expirimental task parameters
 task_params = parser.add_argument_group('Task Parameters')
 task_params.add_argument('--experiment', type=str, default='splitMNIST', choices=['permMNIST', 'splitMNIST'])
-task_params.add_argument('--scenario', type=str, default='class', choices=['task', 'domain', 'class'])
+task_params.add_argument('--scenario', type=str, default='domain', choices=['task', 'domain', 'class'])
 task_params.add_argument('--tasks', type=int, help='number of tasks')
 
 # specify loss functions to be used
@@ -104,7 +104,7 @@ store_params.add_argument('--norm-exemplars', action='store_true', help="normali
 eval_params = parser.add_argument_group('Evaluation Parameters')
 eval_params.add_argument('--time', action='store_true', help="keep track of total training time")
 eval_params.add_argument('--metrics', action='store_true', help="calculate additional metrics (e.g., BWT, forgetting)")
-eval_params.add_argument('--pdf', action='store_true', help="generate pdf with results")
+eval_params.add_argument('--pdf', action='store_true', default=True,help="generate pdf with results")
 eval_params.add_argument('--visdom', action='store_true', help="use visdom for on-the-fly plots")
 eval_params.add_argument('--log-per-task', action='store_true', help="set all visdom-logs to [iters]")
 eval_params.add_argument('--loss-log', type=int, default=200, metavar="N", help="# iters after which to plot loss")
@@ -200,6 +200,7 @@ def run(args, verbose=False):
         name=args.experiment, scenario=scenario, tasks=args.tasks, data_dir=args.d_dir,
         verbose=verbose, exception=True if args.seed==0 else False,
     )
+    
 
 
     #-------------------------------------------------------------------------------------------------#
@@ -615,7 +616,7 @@ def run(args, verbose=False):
         figure_list = []  #-> create list to store all figures to be plotted
 
         # -generate all figures (and store them in [figure_list])
-        key = "acc per task ({} task)".format("all classes up to trained" if scenario=='class' else "only classes in")
+        key = 'acc per task{}'.format(' (all classes up to evaluated task)' if args.scenario=="class" else '')
         plot_list = []
         for i in range(args.tasks):
             plot_list.append(metrics_dict[key]["task {}".format(i + 1)])
