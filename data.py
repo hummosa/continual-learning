@@ -167,12 +167,11 @@ DATASET_CONFIGS = {
 
 
 def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_config=False, verbose=False,
-                             exception=False):
+                             exception=False, contextual = False, rng=np.random.default_rng()):
     '''Load, organize and return train- and test-dataset for requested experiment.
 
     [exception]:    <bool>; if True, for visualization no permutation is applied to first task (permMNIST) or digits
                             are not shuffled before being distributed over the tasks (splitMNIST)'''
-
     # depending on experiment, get and organize the datasets
     if name == 'permMNIST':
         # configurations
@@ -213,7 +212,7 @@ def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_
         classes_per_task = int(np.floor(10 / tasks))
         if not only_config:
             # prepare permutation to shuffle label-ids (to create different class batches for each random seed)
-            permutation = np.array(list(range(10))) if exception else np.random.permutation(list(range(10)))
+            permutation = np.array(list(range(10))) if exception else rng.permutation(list(range(10)))
             target_transform = transforms.Lambda(lambda y, p=permutation: int(p[y]))
             # prepare train and test datasets with all classes
             mnist_train = get_dataset('mnist28', type="train", dir=data_dir, target_transform=target_transform,
@@ -233,7 +232,17 @@ def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_
                 ) if scenario=='domain' else None
                 train_datasets.append(SubDataset(mnist_train, labels, target_transform=target_transform))
                 test_datasets.append(SubDataset(mnist_test, labels, target_transform=target_transform))
-    
+                
+                if contextual:  # append the opposite of each task as well after flipping labels.
+                    target_transform2 = transforms.Lambda( # Flips labels to create an opposite contextual task)
+                                        lambda y: 1- y
+                                    )
+                    target_transform_contextualize = transforms.Compose([target_transform, target_transform2])
+                    train_datasets.append(SubDataset(mnist_train, labels, target_transform=target_transform_contextualize))
+                    test_datasets.append(SubDataset(mnist_test, labels, target_transform=target_transform_contextualize))
+            if contextual: # but then cut from 10 tasks (5 and their opposites) to only the first 5.
+                train_datasets = train_datasets[:5]
+                test_datasets = test_datasets[:5]
     else:
         raise RuntimeError('Given undefined experiment: {}'.format(name))
 

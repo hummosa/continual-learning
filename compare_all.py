@@ -178,7 +178,7 @@ if __name__ == '__main__':
     NONE = collect_all(NONE, seed_list, args, name="None")
 
     all_metric_dics = [NONE, OFF ]
-    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
+    np.save('all_metric_dics_contextual', all_metric_dics, allow_pickle=True)
     ###----"TASK-SPECIFIC"----####
 
     ## XdG
@@ -211,7 +211,7 @@ if __name__ == '__main__':
     args.si = False
 
     all_metric_dics = [NONE, OFF, EWC, OEWC, SI, ]
-    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
+    np.save('all_metric_dics_contextual', all_metric_dics, allow_pickle=True)
 
     ###----"REPLAY"----###
 
@@ -263,7 +263,7 @@ if __name__ == '__main__':
         ICARL = collect_all(ICARL, seed_list, args, name="iCaRL (budget = {})".format(args.budget))
 
     all_metric_dics = [NONE, OFF, EWC, OEWC, SI, LWF, RP, RKD, AGEM, ER]
-    np.save('all_metric_dics', all_metric_dics, allow_pickle=True)
+    np.save('all_metric_dics_contextual', all_metric_dics, allow_pickle=True)
     #-------------------------------------------------------------------------------------------------#
 
     #---------------------------#
